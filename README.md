@@ -50,9 +50,6 @@ The project includes an interactive web interface that enables:
   - Results include the chunk text, source document, and segmentation strategy used.
 
 ---
-נכון, הנה הגרסה המעודכנת של החלק ב-README בפורמט אחיד:
-
-```markdown
 ## **Usage**
 
 ### **1. Prerequisites**
