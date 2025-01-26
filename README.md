@@ -50,26 +50,53 @@ The project includes an interactive web interface that enables:
   - Results include the chunk text, source document, and segmentation strategy used.
 
 ---
+נכון, הנה הגרסה המעודכנת של החלק ב-README בפורמט אחיד:
 
+```markdown
 ## **Usage**
 
 ### **1. Prerequisites**
-- Install the necessary Python packages:
+Before running the application, follow these steps:
+
+- **Set up a virtual environment** (optional, but recommended):
+  ```bash
+  python -m venv env39
+  ```
+
+- **Activate the virtual environment**:
+  - On **Mac/Linux**:
+    ```bash
+    source env39/bin/activate
+    ```
+  - On **Windows**:
+    ```bash
+    .\env39\Scripts\activate
+    ```
+
+- **Install the necessary Python packages**:
   ```bash
   pip install -r requirements.txt
   ```
 
 ### **2. Running the Application**
-- Start the Flask server:
-  ```bash
-  flask run
-  ```
-- Access the application via `http://127.0.0.1:5000/`.
+To start the Flask application, run the following command:
+
+```bash
+flask run
+```
+
+Once the server is running, open your browser and go to:
+
+```
+http://127.0.0.1:5000/
+```
 
 ### **3. Functionalities**
-- **Upload Documents**: Select a file (PDF or DOCX) and segmentation strategy to process and store embeddings.
-- **Query the Database**: Enter queries to retrieve semantically relevant chunks.
-- **View Database Status**: Check the number of stored documents and chunks.
+- **Upload Documents**: Choose a PDF or DOCX file and select a segmentation strategy to process and store the embeddings.
+- **Query the Database**: Enter a query to retrieve semantically relevant chunks from the database.
+- **View Database Status**: Check how many documents and chunks are currently stored in the database.
+```
+
 
 ---
 
