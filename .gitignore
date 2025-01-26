@@ -1,6 +1,9 @@
 # Ignore environment folder
 env39/
 
+# Ignore uploads folder
+uploads/
+
 # Ignore Faiss database and index files
 faiss_index.bin
 faiss_metadata.json
@@ -8,3 +11,4 @@ document_status.json
 
 # Ignore system files
 .DS_Store
+__pycache__/
