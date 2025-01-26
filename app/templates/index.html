@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עיבוד מסמכים</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #34495e;
+            color: white;
+            padding: 1rem 0;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        input, select, button {
+            width: 80%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        /* כפתור התחלת עיבוד */
+        .btn-process {
+            background-color: #4CAF50; /* ירוק */
+            color: white;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-process:hover {
+            background-color: #45A049; /* ירוק כהה */
+        }
+
+        /* כפתור לעמוד השאלות */
+        .btn-search {
+            background-color: #3498db; /* כחול */
+            color: white;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-search:hover {
+            background-color: #2980b9; /* כחול כהה */
+        }
+
+        /* כפתור לעמוד סטטוס המאגר */
+        .btn-status {
+            background-color: #e67e22; /* כתום */
+            color: white;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-status:hover {
+            background-color: #d35400; /* כתום כהה */
+        }
+
+        #log {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            direction: ltr;
+        }
+        .nav-button {
+            margin-top: 1rem;
+            background-color: #2ecc71;
+            color: white;
+        }
+        .nav-button:hover {
+            background-color: #27ae60;
+        }
+        footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #34495e;
+            color: white;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script>
+        function startDynamicProcessing() {
+            const fileInput = document.getElementById("document");
+            const strategy = document.getElementById("strategy").value;
+
+            if (!fileInput.files.length) {
+                alert("אנא בחר קובץ לפני התחלת העיבוד.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("document", fileInput.files[0]);
+            formData.append("strategy", strategy);
+
+            const logDiv = document.getElementById("log");
+            logDiv.innerHTML = ""; // נקה את הלוג הקודם
+
+            fetch("/process", {
+                method: "POST",
+                body: formData,
+            })
+                .then(response => {
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+
+                    function readChunk() {
+                        reader.read().then(({ done, value }) => {
+                            if (done) {
+                                logDiv.innerHTML += "<br><strong>Processing completed!</strong>";
+                                logDiv.scrollTop = logDiv.scrollHeight; // גלול לתחתית
+                                return;
+                            }
+                            const chunk = decoder.decode(value);
+                            logDiv.innerHTML += chunk;
+                            logDiv.scrollTop = logDiv.scrollHeight; // גלול לתחתית
+                            readChunk();
+                        });
+                    }
+                    readChunk();
+                })
+                .catch(error => {
+                    logDiv.innerHTML += `<div style="color: red;">Error: ${error.message}</div>`;
+                    logDiv.scrollTop = logDiv.scrollHeight; // גלול לתחתית
+                });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        עיבוד מסמכים
+    </header>
+    <main>
+        <h1>בחר מסמך לעיבוד</h1>
+        <p>
+            ברוך הבא למערכת עיבוד המסמכים! העלה מסמך, בחר שיטת עיבוד, וגש לעמוד החיפוש לשאול שאלות ולקבל תוצאות מדויקות.
+        </p>
+        <form id="processForm" enctype="multipart/form-data">
+            <label for="document">בחר קובץ:</label>
+            <input type="file" name="document" id="document" required>
+            
+            <label for="strategy">בחר שיטת עיבוד:</label>
+            <select name="strategy" id="strategy" required>
+                <option value="fixed">גודל קבוע עם חפיפה</option>
+                <option value="sentence">לפי משפטים</option>
+                <option value="paragraph">לפי פסקאות</option>
+            </select>
+            
+            <button class="btn-process" type="button" onclick="startDynamicProcessing()">התחל עיבוד</button>
+        </form>
+        <div id="log"></div>
+        <button class="btn-search" onclick="window.location.href='/search'">לעמוד השאלות</button>
+        <button class="btn-status" onclick="window.location.href='/status-page'">מעבר לעמוד סטטוס המאגר</button>
+        
+
+    </main>
+    <footer>
+        &copy; 2025 עיבוד מסמכים | כל הזכויות שמורות
+    </footer>
+</body>
+</html>

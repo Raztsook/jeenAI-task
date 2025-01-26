@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סטטוס מסמכים</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #34495e;
+            color: white;
+            padding: 1rem 0;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        th {
+            background-color: #f4f4f9;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #34495e;
+            color: white;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-home {
+            background-color: #3498db;
+            color: white;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-home:hover {
+            background-color: #2980b9;
+        }
+        .btn-reset {
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-reset:hover {
+            background-color: #c0392b;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchStatus();
+        });
+
+        function fetchStatus() {
+            fetch('/status')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const statusDiv = document.getElementById("status-content");
+                    statusDiv.innerHTML = ""; // נקה את התוכן הקודם
+
+                    if (data.documents && data.documents.length) {
+                        let tableContent = `
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>שם קובץ</th>
+                                        <th>מספר צ'אנקים</th>
+                                        <th>שיטת חלוקה</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        data.documents.forEach(doc => {
+                            tableContent += `
+                                <tr>
+                                    <td>${doc.source}</td>
+                                    <td>${doc.chunk_count}</td>
+                                    <td>${doc.strategy}</td>
+                                </tr>
+                            `;
+                        });
+
+                        tableContent += `
+                                </tbody>
+                            </table>
+                        `;
+                        statusDiv.innerHTML = tableContent;
+                    } else {
+                        statusDiv.innerHTML = "<p>אין מסמכים במאגר.</p>";
+                    }
+                })
+                .catch(error => {
+                    const statusDiv = document.getElementById("status-content");
+                    statusDiv.innerHTML = `<p class="error">שגיאה בטעינת המידע: ${error.message}</p>`;
+                });
+        }
+
+        function resetDatabase() {
+            fetch('/reset', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+                alert('המאגר אופס בהצלחה!');
+                fetchStatus(); // עדכון המידע לאחר איפוס
+            })
+            .catch(error => {
+                alert(`שגיאה באיפוס המאגר: ${error.message}`);
+            });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        סטטוס מסמכים
+    </header>
+    <main>
+        <h1>מידע על מסמכים במאגר</h1>
+        <div id="status-content"></div>
+        <button class="btn-home" onclick="window.location.href='/'">חזרה לעמוד הבית</button>
+        <button class="btn-reset" onclick="resetDatabase()">איפוס מסמכים</button>
+    </main>
+    <footer>
+        &copy; 2025 עיבוד מסמכים | כל הזכויות שמורות
+    </footer>
+</body>
+</html>

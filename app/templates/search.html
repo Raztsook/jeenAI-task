@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עמוד שאלות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #34495e;
+            color: white;
+            padding: 1rem 0;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        input, select, button {
+            width: 80%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #results {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            direction: ltr;
+        }
+        .nav-button {
+            margin-top: 1rem;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.7rem;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            background-color: #27ae60;
+        }
+        footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #34495e;
+            color: white;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script>
+        function performSearch() {
+    const query = document.getElementById("query").value;
+
+    if (!query) {
+        alert("יש להזין שאלה.");
+        return;
+    }
+
+    fetch("/search", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ query })
+})
+.then(response => response.json())
+.then(data => {
+    console.log("Response Data:", data); // הוסף את זה לבדיקה
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "";
+    if (data.results && data.results.length) {
+        data.results.forEach((result, index) => {
+            resultsDiv.innerHTML += `
+                <div>
+                    <strong>Result ${index + 1}:</strong>
+                    <p>${result.text}</p>
+                    <p><em>source: ${result.source}</em></p>
+                    <p><em>strategy:</br> ${result.division_method}</em></p>
+                    <hr>
+                </div>
+            `;
+        });
+    } else {
+        resultsDiv.innerHTML = "<p>לא נמצאו תוצאות.</p>";
+    }
+})
+.catch(error => {
+    alert("אירעה שגיאה: " + error.message);
+});
+
+}
+
+    </script>
+</head>
+<body>
+    <header>
+        עיבוד מסמכים
+    </header>
+    <main>
+        <h1>שאל שאלה על המסמכים שלך</h1>
+        <form id="searchForm">
+            <label for="query">הזן את שאלתך:</label>
+            <input type="text" id="query" name="query" required>
+            <button type="button" onclick="performSearch()">חפש</button>
+        </form>
+        <div id="results"></div>
+        <button class="nav-button" onclick="window.location.href='/'">חזור לעמוד הראשי</button>
+    </main>
+    <footer>
+        &copy; 2025 עיבוד מסמכים | כל הזכויות שמורות
+    </footer>
+</body>
+</html>
