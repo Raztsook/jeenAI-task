@@ -92,7 +92,7 @@ http://127.0.0.1:5000/
 - **Upload Documents**: Choose a PDF or DOCX file and select a segmentation strategy to process and store the embeddings.
 - **Query the Database**: Enter a query to retrieve semantically relevant chunks from the database.
 - **View Database Status**: Check how many documents and chunks are currently stored in the database.
-```
+
 
 
 ---
