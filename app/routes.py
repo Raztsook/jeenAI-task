@@ -13,7 +13,7 @@ import re
 from flask import Flask, render_template
 
 app = Flask(__name__)
-
+bp = Blueprint('main', __name__)
 # כל שאר ההגדרות שלך:
 # הגדרת routes ובלוגיקה של האפליקציה
 
@@ -21,10 +21,6 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))  # Railway נותן את PORT דרך משתנה סביבה
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
-bp = Blueprint('main', __name__)
-
 
 
 @bp.route('/', methods=['GET', 'POST'])
