@@ -13,7 +13,6 @@ def create_app():
         print(f"Created uploads directory: {app.config['UPLOAD_FOLDER']}")
 
     # רישום ה-Blueprint
-    from .routes import bp
     app.register_blueprint(bp)
 
     return app
